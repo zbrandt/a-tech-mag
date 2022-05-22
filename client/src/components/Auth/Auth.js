@@ -5,10 +5,10 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { signin, signup } from '../../actions/auth';
 
-import Icon from './icon';
-import useStyles from './styles';
+import useStyles from './styles.js';
 import Input from './Input';
 import { signInWithGoogle } from './Firebase';
+import './styles.css'
 
 const initialState = { firstName: '', lastName: '', email: '', password: '', confirmPassword: ''};
 
@@ -83,7 +83,7 @@ const Auth = () => {
                     <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
                         {isSignup ? "Sign Up" : "Sign In"}
                     </Button>
-                    <button onClick={googleLogin}>Sign In With Google</button>
+                    <button class="login-with-google-btn" onClick={googleLogin}>Sign In With Google</button>
                     <Grid container justify="flex-end">
                         <Grid item>
                             <Button onClick={switchMode}>
