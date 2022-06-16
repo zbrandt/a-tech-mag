@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AppBar, Avatar, Typography, Toolbar, Button } from '@material-ui/core';
+import { AppBar, Avatar, Typography, Toolbar, Button, TextField } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import jwt_decode from 'jwt-decode';
+import { getPostsBySearch } from '../../actions/posts';
+import SearchIcon from '@mui/icons-material/Search';
 
 import useStyles from './styles';
 import atechmag from '../../images/tech mag.png';
@@ -13,6 +15,8 @@ const Navbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const [search, setSearch] = useState('');
+    const [tags, setTags] = useState([]);
 
     const logout = () => {
         dispatch({ type: 'LOGOUT' });
@@ -36,24 +40,40 @@ const Navbar = () => {
         setUser(JSON.parse(localStorage.getItem('profile')));
     }, [location])
 
+    const handleKeyPress = (e) => {
+        if (e.keyCode === 13) {
+            searchPosts();
+        }
+    };
+
+    const searchPosts = () => {
+        if (search.trim() || tags) {
+            dispatch(getPostsBySearch({ search, tags: tags.join(',') }));
+            navigate(`/posts/search?searchQuery=${search || "none"}&tags=${tags.join(',')}`);
+        } else {
+            navigate('/');
+        }
+    };
+
     return (
         <AppBar className={classes.appBar} position="static" color="inherit">
             <div classesName={classes.brandContainer}>
-                {/* <Link to="/"><Typography className={classes.heading} variant="h2" align="center">A Tech Mag</Typography></Link> */}
-                
-                <img className={classes.image} src={atechmag} alt="atechmag" height="60" />
+                <Link to="/"><img className={classes.image} src={atechmag} alt="atechmag" height="240" /></Link>
             </div>
-            <Toolbar className={classes.toolbar}>
-                {user ? (
-                    <div className={classes.profile}>
-                        <Avatar className={classes.purple} alt={user.result.name}>{user.result.name.charAt(0)}</Avatar>
-                        <Typography className={classes.userName} variant="h6">{user.result.name}</Typography>
-                        <Button variant="contained" className={classes.logout} color="secondary" onClick={logout}>Logout</Button>
-                    </div>
-                ) : (
-                    <Link to="/auth"><Button component={Link} to="/auth" variant="contained" color="primary">Sign In</Button></Link>
-                )}
-            </Toolbar>
+            <div className={classes.toolbar}>
+                <Button onClick={searchPosts} className={classes.searchButton}>
+                    <SearchIcon color="primary" sx={{ fontSize: 40 }} />
+                </Button>
+                <TextField 
+                    name="search" 
+                    variant="outlined"
+                    label="Search Articles"
+                    onKeyPress={handleKeyPress}
+                    fullWidth
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </div>
         </AppBar>
     )
 }

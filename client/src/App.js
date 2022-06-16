@@ -12,7 +12,7 @@ const App = () => {
 
     return (
 		<BrowserRouter>
-			<Container maxwidth="xl">
+			<Container maxWidth="xl">
 				<Navbar />
 				<Routes>
 					<Route path="/" element={<Navigate replace to="/posts" />} />
